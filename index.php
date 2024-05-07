@@ -1,90 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Benvenuto</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            padding-top: 20px;
-        }
-        .container {
-            max-width: 80%;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-        }
-        .btn-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        .btn-container a {
-            flex: 0 0 calc(50% - 10px);
-            margin-bottom: 20px;
-        }
-        button {
-            width: 100%;
-            padding: 8px;
-            color: #fff;
-            background-color: #007bff;
-            border-color: #007bff;
-            border-radius: 3px;
-            cursor: pointer;
-        }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" href="logo.png" type="image/png">
+  </head>
+  <body>
+    <nav class="Navbar">
+      <div class="container">
+        <div class="Logo">Roverino.</div>
 
-        button:hover {
-            color: #fff;
-            background-color: #0069d9;
-            border-color: #0062cc;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-    <?php
-    session_start();
-    if(isset($_SESSION['username'])) {
-        $username = $_SESSION['username'];
-        echo "<h1>Benvenuto, $username</h1>";
-    } else if(isset($_SESSION['admin'])) {
-        echo "<h1>Benvenuto, Amministratore</h1>";
-    } else{
-        echo "<h1>Benvenuto</h1>";
-    }
-    ?>
-    
-    <p>Questo sito ti permette di visualizzare, aggiungere giocatori o formazioni di roverino.</p>
-    <p>Scegli l'azione che desideri effettuare:</p>
-    
-    <div class="btn-container">
-        <a href="visualizza.php"><button type="button">Visualizzare GIOCATORI</button></a>
-        <a href="aggiungi.php"><button type="button">Aggiungere GIOCATORI</button></a>
-        <a href="formazioni.php"><button type="button">Visualizzare FORMAZIONI</button></a>
-        <?php
+        <div id="menu" class="menu">
+          <header class="inline">
+            <div class="Logo">Roverino.</div>
+            <button
+              id="closeMenuBtn"
+              title="Close Menu"
+              aria-label="Close Menu"
+              class="NavButton"
+            >
+              <i class="ri-close-line"></i>
+            </button>
+          </header>
+
+          <a href="#" class="NavLink">Home</a>
+          <a href="#plans" class="NavLink">Gestisci</a>
+          <?php
+          session_start();
+          if(isset($_SESSION['username']) || isset($_SESSION['admin'])) {
+                echo "<a href=logout.php class='NavLink'>Logout</a>";
+            }
+            else{
+                echo "<a href=login.php class='NavLink'>Login</a>";
+            }
+          ?>
+        </div>
+
+        <button
+          id="openMenuBtn"
+          title="Open Menu"
+          aria-label="Open Menu"
+          class="NavButton"
+        >
+          <i class="ri-menu-line"></i>
+        </button>
+      </div>
+    </nav>
+    <main>
+      <section id="home">
+        <div class="hero">
+          <div class="visual">
+            <picture>
+              <source
+                srcset="
+                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/landing-page-with-scroll-driven/assets/images/hero.webp
+                "
+                type="image/avif"
+                media="(width > 1024px)"
+              />
+              <source
+                srcset="
+                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/landing-page-with-scroll-driven/assets/images/hero-mobile.avif
+                "
+                type="image/avif"
+              />
+              <source
+                srcset="
+                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/landing-page-with-scroll-driven/assets/images/hero.webp
+                "
+                media="(width > 1024px)"
+                type="image/webp"
+              />
+              <img
+                src="https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/landing-page-with-scroll-driven/assets/images/hero-mobile.webp"
+                alt="fitness"
+              />
+            </picture>
+          </div>
+
+          <div class="content">
+            <?php
+            if(isset($_SESSION['username'])) {
+                $username = $_SESSION['username'];
+                echo "<h1>Benvenuto, $username</h1>";
+            } else if(isset($_SESSION['admin'])) {
+                echo "<h1>Benvenuto, Amministratore</h1>";
+            } else{
+                echo "<h1>Benvenuto</h1>";
+            }
+            ?>
+            <div class="wrapper">
+              <a href="#discover" class="LinkButton Primary"> SCOPRI DI PIÙ </a>
+            </div>
+          </div>
+        </div>
+
+        <div id="discover" class="fold">
+          <div class="subject">
+            <p>
+              Il roverino è uno
+              <span style="color: var(--brand-1)"> sport di squadra</span>
+              , praticato prevalentemente in ambito scout, che si gioca con un
+              apposito cerchio di corda chiamato roverino.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="plans" class="cards">
+        <div class="subject">
+          <div class="container">
+            <a href="visualizza.php" class="Card">
+              <i class="ri-trophy-line"></i>
+              <div>
+                <h2>Visualizzare GIOCATORI</h2>
+              </div>
+            </a>
+            <a href="aggiungi.php" class="Card">
+              <i class="ri-flag-2-line"></i>
+              <div>
+                <h2>Aggiungere GIOCATORI</h2>
+              </div>
+            </a>
+            <a href="formazioni.php" class="Card">
+              <i class="ri-team-line"></i>
+              <div>
+                <h2>Visualizzare FORMAZIONI</h2>
+              </div>
+            </a>
+            <?php
             if(isset($_SESSION['admin'])) {
-                echo "<a href='lineup.php'><button type='button'>Aggiungere FORMAZIONI</button></a>";
-                echo "<a href='admin.php'><button type='button'>Area amministratore</button></a>";
+                echo "<a href='lineup.php' class='Card'><i class='ri-team-line'></i><div><h2>Aggiungere FORMAZIONI</h2></div></a>";
+                echo "<a href='admin.php' class='Card'><i class='ri-team-line'></i><div><h2>Area amministratore</h2></div></a>";
             }
             if(isset($_SESSION['username']) || isset($_SESSION['admin'])) {
-                echo "<a href=logout.php><button type=button>Logout</button></a>";
-                echo "</div>";
+                echo "<a href=logout.php class='Card'><i class='ri-team-line'></i><div><h2>Logout</h2></div></a>";
             } else{
-                echo "<a href=login.php><button type=button>Accedi</button></a>";
-                echo "</div>";
-                echo "<p>Per aggiungere giocatori o visualizzare formazioni devi essere iscritto</p>";
+                echo "<a href=login.php class='Card'><i class='ri-team-line'></i><div><h2>Accedi</h2></div></a>";
             }
-        ?>
+            ?>
+          </div>
+        </div>
+      </section>
 
-    
-    </div>
-</body>
-</html>
+      <section id="about" class="about">
+        <footer>
+          <br>
+          <p>
+            Capolavoro 2024, built by
+            <a
+              href="https://github.com/DomeManca"
+              style="color: var(--brand-1); text-decoration: none"
+              >Manca Domenico</a
+            >.
+          </p>
+        </footer>
+      </section>
+    </main>
+  </body>
+  <script src="./script.js"></script>
+</html>

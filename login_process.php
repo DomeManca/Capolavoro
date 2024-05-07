@@ -11,11 +11,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
     // Query per verificare l'esistenza dell'utente nel database
     $query = "SELECT * FROM users WHERE username = :username AND password = :password";
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':password', $password);
+    $stmt->bindParam(':password', $hashed_password);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

@@ -87,16 +87,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete2'])) {
     exit();
 }
 
-// Aggiornamento dello stato admin degli utenti
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_admin'])) {
-    foreach ($_POST['utenti'] as $utenteId => $admin) {
-        // Aggiorna lo stato admin dell'utente nel database
-        $query = "UPDATE users SET admin = :admin WHERE id = :id";
-        $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':admin', $admin, PDO::PARAM_INT);
-        $stmt->bindParam(':id', $utenteId, PDO::PARAM_INT);
-        $stmt->execute();
-    }
+// Modifica lo stato di admin dell'utente
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['toggle_admin'])) {
+    $username = $_POST['username'];
+
+    // Ottieni lo stato attuale dell'amministratore
+    $query = "SELECT admin FROM users WHERE username = :username";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':username', $username);
+    $stmt->execute();
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Inverti lo stato dell'amministratore
+    $adminStatus = $userData['admin'] == 1 ? 0 : 1;
+
+    // Aggiorna lo stato admin dell'utente nel database
+    $query = "UPDATE users SET admin = :admin WHERE username = :username";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':admin', $adminStatus, PDO::PARAM_INT);
+    $stmt->bindParam(':username', $username);
+    $stmt->execute();
+    // Redirect o aggiornamento della pagina
+    header('Location: admin.php');
+    exit();
+}
+
+// Elimina l'utente
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_user'])) {
+    $username = $_POST['username'];
+    // Elimina l'utente dal database
+    $query = "DELETE FROM users WHERE username = :username";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':username', $username);
+    $stmt->execute();
     // Redirect o aggiornamento della pagina
     header('Location: admin.php');
     exit();
@@ -110,11 +133,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_admin'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Area Admin</title>
+    <link rel="icon" href="logo.png" type="image/png">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            background-image: linear-gradient(231deg, rgba(233, 233, 233, 0.01) 0%, rgba(233, 233, 233, 0.01) 25%,rgba(10, 10, 10, 0.01) 25%, rgba(10, 10, 10, 0.01) 50%,rgba(237, 237, 237, 0.01) 50%, rgba(237, 237, 237, 0.01) 75%,rgba(200, 200, 200, 0.01) 75%, rgba(200, 200, 200, 0.01) 100%),linear-gradient(344deg, rgba(2, 2, 2, 0.03) 0%, rgba(2, 2, 2, 0.03) 20%,rgba(10, 10, 10, 0.03) 20%, rgba(10, 10, 10, 0.03) 40%,rgba(100, 100, 100, 0.03) 40%, rgba(100, 100, 100, 0.03) 60%,rgba(60, 60, 60, 0.03) 60%, rgba(60, 60, 60, 0.03) 80%,rgba(135, 135, 135, 0.03) 80%, rgba(135, 135, 135, 0.03) 100%),linear-gradient(148deg, rgba(150, 150, 150, 0.03) 0%, rgba(150, 150, 150, 0.03) 14.286%,rgba(15, 15, 15, 0.03) 14.286%, rgba(15, 15, 15, 0.03) 28.572%,rgba(74, 74, 74, 0.03) 28.572%, rgba(74, 74, 74, 0.03) 42.858%,rgba(175, 175, 175, 0.03) 42.858%, rgba(175, 175, 175, 0.03) 57.144%,rgba(16, 16, 16, 0.03) 57.144%, rgba(16, 16, 16, 0.03) 71.42999999999999%,rgba(83, 83, 83, 0.03) 71.43%, rgba(83, 83, 83, 0.03) 85.71600000000001%,rgba(249, 249, 249, 0.03) 85.716%, rgba(249, 249, 249, 0.03) 100.002%),linear-gradient(122deg, rgba(150, 150, 150, 0.01) 0%, rgba(150, 150, 150, 0.01) 20%,rgba(252, 252, 252, 0.01) 20%, rgba(252, 252, 252, 0.01) 40%,rgba(226, 226, 226, 0.01) 40%, rgba(226, 226, 226, 0.01) 60%,rgba(49, 49, 49, 0.01) 60%, rgba(49, 49, 49, 0.01) 80%,rgba(94, 94, 94, 0.01) 80%, rgba(94, 94, 94, 0.01) 100%),linear-gradient(295deg, rgba(207, 207, 207, 0.02) 0%, rgba(207, 207, 207, 0.02) 25%,rgba(47, 47, 47, 0.02) 25%, rgba(47, 47, 47, 0.02) 50%,rgba(142, 142, 142, 0.02) 50%, rgba(142, 142, 142, 0.02) 75%,rgba(76, 76, 76, 0.02) 75%, rgba(76, 76, 76, 0.02) 100%),linear-gradient(73deg, rgba(81, 81, 81, 0.03) 0%, rgba(81, 81, 81, 0.03) 12.5%,rgba(158, 158, 158, 0.03) 12.5%, rgba(158, 158, 158, 0.03) 25%,rgba(136, 136, 136, 0.03) 25%, rgba(136, 136, 136, 0.03) 37.5%,rgba(209, 209, 209, 0.03) 37.5%, rgba(209, 209, 209, 0.03) 50%,rgba(152, 152, 152, 0.03) 50%, rgba(152, 152, 152, 0.03) 62.5%,rgba(97, 97, 97, 0.03) 62.5%, rgba(97, 97, 97, 0.03) 75%,rgba(167, 167, 167, 0.03) 75%, rgba(167, 167, 167, 0.03) 87.5%,rgba(22, 22, 22, 0.03) 87.5%, rgba(22, 22, 22, 0.03) 100%),linear-gradient(90deg, rgb(0,105,217),rgb(0,105,217));
             padding-top: 20px;
         }
         .container {
@@ -215,7 +239,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_admin'])) {
             <select class="form-control" name="formazione_id" id="formazione_id">
                 <?php foreach ($formazioni as $it): ?>
                     <option value="<?php echo $it['id']; ?>" <?php if ($it['id'] == $formazioneId) echo 'selected'; ?>>
-                        <?php echo $it['id']; ?>
+                        <?php echo $it['nome'];?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -235,34 +259,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_admin'])) {
     </div>
     <div class="card-body">
         <form method="POST">
+            <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Username</th>
                         <th>Admin</th>
+                        <th>Elimina</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    // Ottieni la lista degli utenti dal database
-                    $query = "SELECT * FROM users";
-                    $stmt = $pdo->query($query);
-                    $utenti = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        // Ottieni la lista degli utenti dal database
+                        $query = "SELECT * FROM users";
+                        $stmt = $pdo->query($query);
+                        $utenti = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    // Cicla attraverso gli utenti e visualizza le informazioni
-                    foreach ($utenti as $utente):
-                    $uid = $utente['id'];
+                        // Cicla attraverso gli utenti e visualizza le informazioni
+                        foreach ($utenti as $utente):
                     ?>
-                    <tr>
-                        <td><?php echo $utente['username']; ?></td>
-                        <td>
-                            <input type="checkbox" name="utenti[<?php echo $uid?>]" value="1" <?php echo $utente['admin'] == 1 ? 'checked' : ''; ?>>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><?php echo $utente['username']; ?></td>
+                            <td>
+                                <form method="POST">
+                                    <input type="hidden" name="username" value="<?php echo $utente['username']; ?>">
+                                    <button type="submit" class="btn btn-primary" name="toggle_admin" <?php echo $utente['proprietario'] == true ? 'disabled' : ''; ?>>
+                                        <?php echo $utente['admin'] == 1 ? 'Rimuovi Admin' : 'Rendi Admin'; ?>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="POST">
+                                    <input type="hidden" name="username" value="<?php echo $utente['username']; ?>">
+                                    <button type="submit" class="btn btn-danger" name="delete_user" <?php echo $utente['proprietario'] == true ? 'disabled' : ''; ?>>
+                                        Elimina Utente
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <button type="submit" class="btn btn-primary" name="update_admin">Salva modifiche</button>
+            </div>
         </form>
     </div>
     </div>

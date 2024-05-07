@@ -1,9 +1,9 @@
 <?php
 // Credenziali di accesso al database
 $db_host = 'localhost'; // Indirizzo del server del database
-$db_name = 'my_mancadome'; // Nome del database
-$db_user = 'mancadome'; // Nome utente del database
-$db_password = ''; // Password del database
+$db_name = 'roverino'; // Nome del database
+$db_user = 'programma'; // Nome utente del database
+$db_password = 'roverino'; // Password del database
 
 try {
     // Connessione al database usando PDO

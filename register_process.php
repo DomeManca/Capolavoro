@@ -11,6 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
     // Query per verificare se il nome utente esiste già nel database
     $check_query = "SELECT COUNT(*) FROM users WHERE username = :username";
     $check_stmt = $pdo->prepare($check_query);
@@ -25,10 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         // Se il nome utente non esiste già, procedi con l'inserimento nel database
         // Query per inserire l'utente nel database
-        $insert_query = "INSERT INTO users (username, password, admin) VALUES (:username, :password, 0)";
+        $insert_query = "INSERT INTO users (username, password, admin, proprietario) VALUES (:username, :password, 0, 0)";
         $insert_stmt = $pdo->prepare($insert_query);
         $insert_stmt->bindParam(':username', $username);
-        $insert_stmt->bindParam(':password', $password);
+        $insert_stmt->bindParam(':password', $hashed_password);
 
         // Esegui la query di inserimento
         if ($insert_stmt->execute()) {
