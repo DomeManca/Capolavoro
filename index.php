@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Home</title>
+    <title>ROVERINO.</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="icon" href="logo.png" type="image/png">
   </head>
