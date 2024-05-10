@@ -114,6 +114,7 @@
             <a href="visualizza.php" class="Card">
               <i class="ri-trophy-line"></i>
               <div>
+              	<img src="visualizza.png" alt="Nome Immagine" class="section-image">
                 <h2>Visualizzare GIOCATORI</h2>
               </div>
             </a>
